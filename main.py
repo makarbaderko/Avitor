@@ -23,7 +23,7 @@ password.send_keys(my_pass)
 login.click()
 '''
 
-browser.get("https://www.avito.ru/moskva/zapchasti_i_aksessuary")
+browser.get("https://www.avito.ru/moskva/knigi_i_zhurnaly?i=1")
 # Получение HTML-содержимого
 requiredHtml = browser.page_source
 def write_to_file(name, object_to_write):
@@ -34,7 +34,7 @@ def write_to_file(name, object_to_write):
 soup = BeautifulSoup(requiredHtml, features="lxml")
 
 mydivs = soup.findAll("div", {"class": "item_table-wrapper"})
-#write_to_file('ads.txt', str(mydivs))
+write_to_file('item_look.html', str(mydivs))
 list_of_ads = list(mydivs)
 first_ad = list_of_ads[-1]
 first_ad_soup = BeautifulSoup(str(first_ad), features="lxml")
@@ -45,5 +45,16 @@ left = first_ad_title.find("title=")
 first_ad_title = first_ad_title[left:]
 right = first_ad_title.find('>')
 first_ad_title = first_ad_title[7:right-1]
-print(first_ad_title)
-print(first_ad_price)
+first_ad_adress = str(first_ad_soup.find('span', {"class":"item-address-georeferences-item__content"}))
+left = first_ad_adress.find('>')+1
+first_ad_adress = first_ad_adress[left:]
+right = first_ad_adress.find('<')
+first_ad_adress = first_ad_adress[:right]
+ads_page_adress = str(first_ad_soup.find("a", {"itemprop":"url"}))
+left = ads_page_adress.find('''href=''')+6
+ads_page_adress = ads_page_adress[left:]
+right = ads_page_adress.find('''"''')
+ads_page_adress = "https://www.avito.ru/" + ads_page_adress[:right]
+#print(first_ad_price)
+#print(first_ad_picture)
+print(ads_page_adress)
